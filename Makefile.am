@@ -40,4 +40,6 @@ libtool: $(LIBTOOL_DEPS)
 if HAVE_SPINS_COMPILER
 spins/spins.jar:
 	test -f $@ || (cd "${top_srcdir}/spins/src" && $(ANT))
+clean-local:
+	rm -rf "${top_srcdir}/spins/spins.jar" "${top_srcdir}/spins/build"
 endif
