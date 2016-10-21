@@ -7,21 +7,6 @@
 #include <ltsmin-lib/lts-type.h>
 #include <hre/stringindex.h>
 
-static const char* data_format_string(lts_type_t  t,int typeno){
-    int f=lts_type_get_format(t,typeno);
-    switch(f){
-    case LTStypeDirect: return "direct";
-    case LTStypeRange: {
-        char tmp[256];
-        sprintf(tmp,"[%d,%d]",lts_type_get_min(t,typeno),lts_type_get_max(t,typeno));
-        return strdup(tmp);
-    }
-    case LTStypeChunk: return "chunk";
-    case LTStypeEnum: return "enum";
-    }
-    Abort("illegal format value: %d",f);
-}
-
 void lts_type_serialize(lts_type_t t,stream_t ds){
 	DSwriteS(ds,"lts signature 1.1");
 	uint32_t N=lts_type_get_state_length(t);
