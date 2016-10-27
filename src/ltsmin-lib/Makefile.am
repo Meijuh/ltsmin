@@ -27,6 +27,7 @@ libltsmin_la_SOURCES += ltsmin-lexer.c ltsmin-lexer.h
 libltsmin_la_SOURCES += ltsmin-lexer.l
 libltsmin_la_SOURCES += ltsmin-standard.h
 libltsmin_la_SOURCES += ltsmin-type-system.c ltsmin-type-system.h
+libltsmin_la_SOURCES += tl-optimizer.c tl-optimizer.h
 
 libltsmin_la_LIBADD   = $(top_builddir)/ltl2ba/libltl2ba.la
 libltsmin_la_LIBADD  += ../dm/libdm.la

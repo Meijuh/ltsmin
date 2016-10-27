@@ -14,6 +14,7 @@
 #include <lts-io/user.h>
 #include <ltsmin-lib/ltsmin-standard.h>
 #include <ltsmin-lib/ltsmin-tl.h>
+#include <ltsmin-lib/tl-optimizer.h>
 #include <pins-lib/pins.h>
 #include <pins-lib/pins-impl.h>
 #include <pins-lib/pins-util.h>
@@ -1521,6 +1522,10 @@ gsea_setup(const char *output)
     if (opt.inv_detect) {
         opt.env = LTSminParseEnvCreate();
         opt.inv_expr = pred_parse_file (opt.inv_detect, opt.env, GBgetLTStype(opt.model));
+        Warning(infoLong, "Optimizing invariant...");
+        opt.inv_expr = optimize_pred (opt.inv_expr, opt.env, 0);
+        LTSminLogExpr(infoLong, "Loaded and optimized invariant: ", opt.inv_expr, opt.env);
+
         if (PINS_POR) {
             set_pins_semantics(opt.model, opt.inv_expr, opt.env, NULL, NULL);
             set_cycle_proviso ();

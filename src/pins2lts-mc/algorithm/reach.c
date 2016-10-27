@@ -1,5 +1,6 @@
 #include <hre/config.h>
 
+#include <ltsmin-lib/tl-optimizer.h>
 #include <pins-lib/pins-util.h>
 
 #include <pins2lts-mc/algorithm/ltl.h> // ecd_* && dfs_stack_trace
@@ -492,6 +493,9 @@ reach_local_setup   (run_t *run, wctx_t *ctx)
     if (inv_detect) { // local parsing
         ctx->local->env = LTSminParseEnvCreate();
         ctx->local->inv_expr = pred_parse_file (inv_detect, ctx->local->env, GBgetLTStype(ctx->model));
+        Warning (infoLong, "Optimizing invariant...");
+        ctx->local->inv_expr = optimize_pred (ctx->local->inv_expr, ctx->local->env, 1);
+        LTSminLogExpr (infoLong, "Loaded and optimized invariant: ", ctx->local->inv_expr, ctx->local->env);
         set_pins_semantics (ctx->model, ctx->local->inv_expr, ctx->local->env, NULL, NULL);
     }
 

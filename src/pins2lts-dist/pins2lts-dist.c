@@ -17,6 +17,7 @@
 #include <lts-io/user.h>
 #include <ltsmin-lib/ltsmin-tl.h>
 #include <ltsmin-lib/ltsmin-standard.h>
+#include <ltsmin-lib/tl-optimizer.h>
 #include <pins-lib/pins.h>
 #include <pins-lib/pins-impl.h>
 #include <pins-lib/pins-util.h>
@@ -732,6 +733,10 @@ int main(int argc, char*argv[]){
         if (PINS_POR) Abort ("Distributed tool implements no cycle provisos.");
         ltsmin_parse_env_t env = LTSminParseEnvCreate();
         inv_expr = pred_parse_file (inv_detect, env, ltstype);
+        Warning(infoLong, "Optimizing invariant...");
+        inv_expr = optimize_pred(inv_expr, env, 0);
+        LTSminLogExpr(infoLong, "Loaded and optimized invariant: ", inv_expr, env);
+
         ctx.env = env;
     }
     HREbarrier(HREglobal());

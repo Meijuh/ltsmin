@@ -350,7 +350,7 @@ LTSminSPrintExpr(char *buf, size_t max_buf, ltsmin_expr_t expr, ltsmin_parse_env
             n += LTSminSPrintExpr(buf + (buf?n:0), max_buf, expr->arg1, env);
             n += snprintf        (buf + (buf?n:0), max_buf, ")");
             break;
-        default: Abort("Unknown expression node");
+        default: Abort("Unknown expression node %d", expr->node_type);
     }
     return n;
 }
@@ -383,9 +383,38 @@ LTSminLogExpr(log_t log,char*msg,ltsmin_expr_t expr,ltsmin_parse_env_t env)
     RTfree(buffer);
 }
 
+const char *
+foobar(ltsmin_expr_case s)
+{
+    switch (s) {
+    case S_TRUE:             return "true";
+    case S_FALSE:            return "false";
+    case S_MAYBE:            return "maybe";
+    case S_NOT:              return "!";
+    case S_LT:               return "<";
+    case S_LEQ:              return "<=";
+    case S_GT:               return ">";
+    case S_GEQ:              return ">=";
+    case S_OR:               return "||";
+    case S_AND:              return "&&";
+    case S_EQ:               return "==";
+    case S_NEQ:              return "!=";
+    case S_EQUIV:            return "<->";
+    case S_IMPLY:            return "->";
+    case S_MULT:             return "*";
+    case S_DIV:              return "/";
+    case S_REM:              return "%";
+    case S_ADD:              return "+";
+    case S_SUB:              return "-";
+    case S_EN:               return "??";
+    default:        return "whut";
+    }
+}
+
 ltsmin_expr_t LTSminExpr(ltsmin_expr_case node_type, int token, int idx,
                          ltsmin_expr_t arg1, ltsmin_expr_t arg2)
 {
+    Warning(info, "Creating %d %s", node_type, foobar(token));
     uint32_t hash[5];
     ltsmin_expr_t E = RT_NEW(struct ltsmin_expr_s);
     hash[0] = E->node_type = node_type;

@@ -33,6 +33,7 @@
 #include <ltsmin-lib/ltsmin-standard.h>
 #include <ltsmin-lib/ltsmin-syntax.h>
 #include <ltsmin-lib/ltsmin-tl.h>
+#include <ltsmin-lib/tl-optimizer.h>
 #include <mc-lib/bitvector-ll.h>
 #include <spg-lib/spg-solve.h>
 #include <vset-lib/vector_set.h>
@@ -3831,6 +3832,8 @@ init_invariant_detection()
     for (int i = 0; i < num_inv; i++) {
         inv_parse_env[i] = LTSminParseEnvCreate();
         inv_expr[i] = pred_parse_file(inv_detect[i], inv_parse_env[i], ltstype);
+        Warning(infoLong, "Optimizing invariant #%d", i + 1);
+        inv_expr[i] = optimize_pred(inv_expr[i], inv_parse_env[i], 0);
         if (log_active(infoLong)) {
             const char s[] = "Loaded and optimized invariant #%d: ";
             char buf[snprintf(NULL, 0, s, i + 1) + 1];
@@ -4066,6 +4069,16 @@ init_mu_calculus()
             Warning(info, "parsing CTL* formula");
             ltsmin_expr_t ctl_star = ctl_parse_file(ctl_star_formulas[i], mu_parse_env[total + i], ltstype);
             Warning(info, "converting CTL* %s to mu-calculus", ctl_star_formulas[i]);
+
+            Warning(infoLong, "Optimizing CTL* formula #%d", i + 1);
+            ctl_star = optimize_CTL(ctl_star, mu_parse_env[total + i], 0);
+            if (log_active(infoLong)) {
+                const char s[] = "Loaded and optimized CTL* formula #%d: ";
+                char buf[snprintf(NULL, 0, s, i + 1) + 1];
+                sprintf(buf, s, i + 1);
+                LTSminLogExpr(infoLong, buf, ctl_star, mu_parse_env[total + i]);
+            }
+
             mu_exprs[total + i] = ctl_star_to_mu(ctl_star);
             if (log_active(infoLong)) {
                 const char s[] = "Converted CTL* to mu-calculus formula #%d: ";
@@ -4079,12 +4092,16 @@ init_mu_calculus()
             mu_parse_env[total + i] = LTSminParseEnvCreate();
             Warning(info, "parsing CTL formula");
             mu_exprs[total + i] = ctl_parse_file(ctl_formulas[i], mu_parse_env[total + i], ltstype);
+
+            Warning(infoLong, "Optimizing CTL formula #%d", i + 1);
+            mu_exprs[total + i] = optimize_CTL(mu_exprs[total + i], mu_parse_env[total + i], 0);
             if (log_active(infoLong)) {
                 const char s[] = "Loaded and optimized CTL formula #%d: ";
                 char buf[snprintf(NULL, 0, s, i + 1) + 1];
                 sprintf(buf, s, i + 1);
                 LTSminLogExpr(infoLong, buf, mu_exprs[total + i], mu_parse_env[total + i]);
             }
+
             Warning(info, "converting CTL to mu-calculus...");
             mu_exprs[total + i] = ctl_to_mu(mu_exprs[total + i], mu_parse_env[total + i], ltstype);
             if (log_active(infoLong)) {
@@ -4099,6 +4116,16 @@ init_mu_calculus()
             mu_parse_env[total + i] = LTSminParseEnvCreate();
             Warning(info, "parsing LTL formula");
             ltsmin_expr_t ltl = ctl_parse_file(ltl_formulas[i], mu_parse_env[total + i], ltstype);
+            
+            Warning(infoLong, "Optimizing LTL formula #%d", i + 1);
+            ltl = optimize_CTL(ltl, mu_parse_env[total + i], 0);
+            if (log_active(infoLong)) {
+                const char s[] = "Loaded and optimized LTL formula #%d: ";
+                char buf[snprintf(NULL, 0, s, i + 1) + 1];
+                sprintf(buf, s, i + 1);
+                LTSminLogExpr(infoLong, buf, ltl, mu_parse_env[total + i]);
+            }
+
             Warning(info, "converting LTL %s to mu-calculus", ltl_formulas[i]);
             mu_exprs[total + i] = ltl_to_mu(ltl);
             if (log_active(infoLong)) {
