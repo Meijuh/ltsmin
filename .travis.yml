@@ -5,7 +5,7 @@ compiler:
 - gcc
 
 os:
-- linux
+#- linux
 - osx
 
 dist: precise
@@ -33,20 +33,20 @@ env:
     - CONFIGURE_WITH="--disable-dependency-tracking --enable-werror"
       CFLAGS="-DNDEBUG"
       RELEASE_BUILD="yes"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-unit             --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-DVE              --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-ETF              --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-Promela          --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-LPS                              --disable-doxygen-doc --disable-dependency-tracking"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-PBES                             --disable-doxygen-doc --disable-dependency-tracking"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-PNML             --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-ProB             --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-LTL              --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-safety           --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-POR              --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-DFS-FIFO         --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-SCC              --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
-    - CONFIGURE_WITH="--disable-test-all --enable-test-LTS-generation                   --disable-doxygen-doc --disable-dependency-tracking"
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-unit             --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-DVE              --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-ETF              --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-Promela          --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-LPS                              --disable-doxygen-doc --disable-dependency-tracking"
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-PBES                             --disable-doxygen-doc --disable-dependency-tracking"
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-PNML             --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-ProB             --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking "
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-LTL              --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-safety           --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-POR              --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-DFS-FIFO         --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-SCC              --without-mcrl2 --disable-doxygen-doc --disable-dependency-tracking"
+    #- CONFIGURE_WITH="--disable-test-all --enable-test-LTS-generation                   --disable-doxygen-doc --disable-dependency-tracking"
     
 addons:
   apt:
@@ -127,31 +127,6 @@ install:
   - if [ "$CC" = "gcc" ]; then export CC="gcc-4.9"; fi
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9"; fi
     
-  # install zmq from source, since libzmq3-dev in apt is missing dependencies for a full static LTSmin build (pgm and sodium are missing)
-  # I filed a bug report here: https://github.com/travis-ci/travis-ci/issues/5701
-  - if [ ! -f "$HOME/ltsmin-deps/lib/libzmq.a" ]; then 
-    wget "$ZMQ_URL" -P /tmp &&
-    tar -xf "/tmp/$ZMQ_NAME.tar.gz" -C /tmp &&
-    pushd /tmp/$ZMQ_NAME &&
-    ./autogen.sh &&
-    ./configure --enable-static --enable-shared --prefix="$HOME/ltsmin-deps" --without-libsodium --without-pgm --without-documentation &&
-    make &&
-    make install &&
-    popd; fi
-    
-  # install czmq from source
-  # since czmq is not distributed in Ubuntu.
-  # the LDFLAGS is necessary, because of a bug: https://github.com/zeromq/czmq/issues/1323
-  # the CFLAGS is necessary, because we need to unset NDEBUG: https://github.com/zeromq/czmq/issues/1519
-  - if [ ! -f "$HOME/ltsmin-deps/lib/libczmq.a" ]; then 
-    wget "$CZMQ_URL" -P /tmp &&
-    tar -xf "/tmp/v$CZMQ_VERSION.tar.gz" -C /tmp &&
-    pushd /tmp/czmq-$CZMQ_VERSION &&
-    ./autogen.sh &&
-    ./configure --enable-static --enable-shared --prefix="$HOME/ltsmin-deps" --with-libzmq="$HOME/ltsmin-deps" &&
-    make CFLAGS="" LDFLAGS="-lpthread" &&
-    make install &&
-    popd; fi
     
   # install mCRL2
   - if [ ! -f "$HOME/ltsmin-deps/lib/libmcrl2_core.a" ]; then 
@@ -207,6 +182,8 @@ before_script:
     cp "/usr/local/Cellar/libxml2/$(brew list --versions libxml2 | cut -d' ' -f2)/lib/libxml2.a" "$HOME/static-libs"; fi
 
 script:
+  - ls -al /usr/local/Cellar/libxml2/2.9.4/lib/pkgconfig/libxml-2.0.pc
+  -  pkg-config --libs libxml-2.0 --debug --cflags
   - ./ltsminreconf &&
     ./configure --prefix=/tmp/dist --with-viennacl="$HOME/ltsmin-deps/include" --without-scoop $CONFIGURE_WITH
   - if [ "$TRAVIS_OS_NAME" = "osx" -a "x$RELEASE_BUILD" = "xyes" ]; then make LDFLAGS="-Wl,-search_paths_first -L$HOME/static-libs -weak-liconv"; fi # libiconv is necessary for libpopt
