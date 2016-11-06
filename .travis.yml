@@ -213,7 +213,7 @@ script:
   - if [ "x$RELEASE_BUILD" != "xyes" ]; then make check -j1; fi
   - if [ "x$RELEASE_BUILD" != "xyes" -a $? -ne 0 ]; then cat testsuite/*.log || true; fi
   - if [ "x$RELEASE_BUILD" = "xyes" ]; then 
-    make dist &&
+    make distcheck DISTCHECK_CONFIGURE_FLAGS="-with-viennacl=$HOME/ltsmin-deps/include --without-scoop $CONFIGURE_WITH" &&
     export LTSMIN_VERSION=$(grep "PACKAGE_VERSION" src/hre/config.h | cut -d" " -f3 | cut -d\" -f2) &&
     mv "ltsmin-$LTSMIN_VERSION.tar.gz" "ltsmin-$TRAVIS_TAG-source.tgz"; fi
   - if [ -n $TRAVIS_TAG -a "x$RELEASE_BUILD" = "xyes" ]; then
