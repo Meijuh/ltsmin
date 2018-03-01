@@ -26,7 +26,7 @@ cp changelog.md www
 pushd www
 gem install jekyll bundler
 bundle install
-bundle exec jekyll b
+bundle exec jekyll b --baseurl '/ltsmin'
 popd
 
 set +e
