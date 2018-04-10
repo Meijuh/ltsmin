@@ -10,8 +10,6 @@ cp /usr/lib/x86_64-linux-gnu/libgmp.a "$HOME/static-libs"
 cp /usr/lib/x86_64-linux-gnu/libltdl.a "$HOME/static-libs"
 cp /usr/lib/x86_64-linux-gnu/libxml2.a "$HOME/static-libs"
 cp /usr/lib/x86_64-linux-gnu/liblzma.a "$HOME/static-libs"
-cp /usr/lib/x86_64-linux-gnu/libhwloc.a "$HOME/static-libs"
-cp /usr/lib/x86_64-linux-gnu/libnuma.a "$HOME/static-libs"
 cp /usr/lib/x86_64-linux-gnu/libz.a "$HOME/static-libs"
 
 export LTSMIN_LDFLAGS="-L$HOME/static-libs -static-libgcc -static-libstdc++"
