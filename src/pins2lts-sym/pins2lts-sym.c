@@ -876,39 +876,56 @@ eval_predicate_set(ltsmin_expr_t e, ltsmin_parse_env_t env, vset_t states)
         case PRED_LEQ:
         case PRED_GT:
         case PRED_GEQ: {
-            struct inv_rel_s* rel = (struct inv_rel_s*) c->work;
 
-            // this join is necessary because we can not project an already projected vset.
-            vset_join(rel->shortcut, states, c->container);
-            
-            vset_project_minus(rel->tmp, rel->shortcut, rel->true_states);
-            vset_clear(rel->shortcut);
-            vset_minus(rel->tmp, rel->false_states);
-            
+            bitvector_t deps;
+            bitvector_create(&deps, N);
+            set_pins_semantics(model, e, env, &deps, NULL);
+            const int len = bitvector_n_high(&deps);
+            int depz[len];
+            bitvector_high_bits(&deps, depz);
+            bitvector_free(&deps);
+
+            int vec[N];
+            GBgetInitialState(model, vec);
+
+            vset_t tmp = vset_create(domain, len, depz);
+            vset_t true_states = vset_create(domain, len, depz);
+
             struct rel_expr_info ctx;
-            ctx.vec = rel->vec;
+            ctx.vec = vec;
 
-            ctx.len = rel->len;
-            ctx.deps = rel->deps;
+            ctx.len = len;
+            ctx.deps = depz;
 
             ctx.e = e;
             ctx.env = env;
-            
-            // count when verbose
-            if (log_active(infoLong)) {
-                double elem_count;
-                vset_count(rel->tmp, NULL, &elem_count);
-                if (elem_count >= 10000.0 * REL_PERF) {
-                    const char* p = LTSminPrintExpr(e, env);
-                    Print(infoLong, "evaluating subformula %s for %.*g states.", p, DBL_DIG, elem_count);
-                }
-            }
 
-            vset_update(rel->true_states, rel->tmp, rel_expr_cb, &ctx);
-            vset_minus(rel->tmp, rel->true_states);
-            vset_union(rel->false_states, rel->tmp);
-            vset_clear(rel->tmp);
-            vset_join(c->container, c->container, rel->true_states);
+            vset_project(tmp, states);
+            vset_update_seq(true_states, tmp, rel_expr_cb, &ctx);
+            vset_join(c->container, c->container, true_states);
+            vset_destroy(tmp);
+            vset_destroy(true_states);
+
+//            struct inv_rel_s* rel = (struct inv_rel_s*) c->work;
+//
+//            vset_project(rel->tmp, states);
+//            vset_minus(rel->tmp, rel->true_states);
+//            vset_minus(rel->tmp, rel->false_states);
+//
+//            struct rel_expr_info ctx;
+//            ctx.vec = rel->vec;
+//
+//            ctx.len = rel->len;
+//            ctx.deps = rel->deps;
+//
+//            ctx.e = e;
+//            ctx.env = env;
+//
+//            vset_update(rel->true_states, rel->tmp, rel_expr_cb, &ctx);
+//            vset_minus(rel->tmp, rel->true_states);
+//            vset_union(rel->false_states, rel->tmp);
+//            vset_clear(rel->tmp);
+//            vset_join(c->container, c->container, rel->true_states);
             break;
         }
         default:
