@@ -1064,6 +1064,12 @@ TASK_3(int, check_inv_par_go, vset_t, states, int, i, int, level)
             else eval_predicate_set(inv_expr[i], inv_parse_env[i], states);
 
             if (!vset_equal(inv_set[i], container)) {
+                long double isc;
+                vset_count_fn(inv_set[i], NULL, &isc);
+                long double cc;
+                vset_count_fn(container, NULL, &cc);
+                size_t depth = vset_check(container);
+                Warning(info, "%s: depth: %zu; %Lf %Lf ", inv_detect[i], depth, isc, cc);
                 LTSminExprDestroy(inv_expr[i], 1);
                 LTSminParseEnvDestroy(inv_parse_env[i]);
                 Warning(info, " ");

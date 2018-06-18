@@ -1158,3 +1158,7 @@ vdom_create_lddmc_from_file(FILE *f)
     if (fread(&vector_size, sizeof(int), 1, f) < 1) Abort("Invalid file format.");
     return vdom_create_lddmc(vector_size);
 }
+
+size_t vset_check(vset_t set) {
+    return lddmc_test_ismdd(set->mdd);
+}
