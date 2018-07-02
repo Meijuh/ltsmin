@@ -11,6 +11,10 @@
 
 #include <hre/config.h>
 
+#ifdef HAVE_RAND_S
+#define _CRT_RAND_S
+#endif
+
 #include <stdlib.h>
 
 #include <hre/user.h>
@@ -104,7 +108,12 @@ request_random (lb_t *lb, size_t id)
 {
     size_t res = 0;
     do {
+#ifdef HAVE_RAND_R
         res = rand_r (&lb->local[id]->seed) % lb->threads;
+#elif defined(HAVE_RAND_S)
+        rand_s ((unsigned int*)&res);
+        res %= lb->threads;
+#endif
     } while (res == id);
     fetch_or (&lb->local[res]->requests, 1LL << id);
     Debug ("Requested %zu", res);
