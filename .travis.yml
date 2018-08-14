@@ -24,9 +24,6 @@ addons:
       - libpopt-dev
       - zlib1g-dev
       - xmlto
-      - mingw-w64
-      - mingw-w64-tools
-      - wine
 
 stage: cache warmup
 
@@ -56,6 +53,7 @@ jobs:
       script: skip
     - compiler: gcc
       os: linux
+      sudo: required
       install: travis/install-windows.sh
       script: skip
       env:
@@ -96,6 +94,7 @@ jobs:
       stage: test
     - compiler: gcc
       os: linux
+      sudo: required
       install: travis/install-windows.sh
       script: travis/test-windows.sh
       env:
@@ -164,6 +163,7 @@ jobs:
       stage: deploy
     - compiler: gcc
       os: linux
+      sudo: required
       install:
         - travis/install-windows.sh
       script:
