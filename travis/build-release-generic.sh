@@ -1,9 +1,13 @@
 #!/bin/bash
 set -e
-#set -o xtrace
+set -o xtrace
+
+export LDFLAGS="-flto -O3 $LTSMIN_LDFLAGS"
 
 . travis/configure-$BUILD_TARGET.sh --disable-doxygen-doc \
-    "--prefix=/tmp/$TAG_OR_BRANCH --enable-pkgconf-static" LDFLAGS="-flto -O3 $LTSMIN_LDFLAGS" "$@"
+    "--prefix=/tmp/$TAG_OR_BRANCH --enable-pkgconf-static"  "$@"
+
+unset LDFLAGS
 
 export MAKEFLAGS=-j2
 
@@ -14,13 +18,13 @@ make CFLAGS="-flto -O3 $LTSMIN_CFLAGS" \
     CPPFLAGS="-DNDEBUG" CXXFLAGS="-flto -O3 $LTSMIN_CXXFLAGS"
 make install
 
-if [ "$BUILD_TARGET" -ne "windows" ]; then
+if [ "$BUILD_TARGET" != "windows" ]; then
     # install DiVinE so that it is included in the distribution
     . travis/install-DiVinE.sh
 fi
 
 $STRIP "$STRIP_FLAGS" /tmp/$TAG_OR_BRANCH/bin/* || true
-if [ "$BUILD_TARGET" -ne "windows" ]; then
+if [ "$BUILD_TARGET" != "windows" ]; then
     cp "$HOME/ltsmin-deps/bin/divine" "/tmp/$TAG_OR_BRANCH/bin"
     cp "$HOME/ltsmin-deps$MCRL2_LIB_DIR/bin/txt2lps" "/tmp/$TAG_OR_BRANCH/bin"
     cp "$HOME/ltsmin-deps$MCRL2_LIB_DIR/bin/txt2pbes" "/tmp/$TAG_OR_BRANCH/bin"

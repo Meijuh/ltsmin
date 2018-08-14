@@ -4,6 +4,8 @@ set -e
 
 # set correct compiler
 export BUILD_HOST="x86_64-w64-mingw32.static"
+export CC="x86_64-w64-mingw32.static-gcc"
+export CXX="x86_64-w64-mingw32.static-g++"
 
 echo "deb http://pkg.mxe.cc/repos/apt/debian wheezy main" \
     | sudo tee /etc/apt/sources.list.d/mxeapt.list
@@ -19,6 +21,10 @@ sudo apt-get -yq --no-install-suggests --no-install-recommends install wine \
 
 export PATH=/usr/lib/mxe/usr/bin:$PATH
 
+export LDFLAGS="-static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -Wl,-lwinpthread -Wl,--no-whole-archive"
+
 travis/install-generic.sh
+
+export LDFLAGS=""
 
 set +e

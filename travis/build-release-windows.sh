@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-#set -o xtrace
+set -o xtrace
 
 export LTSMIN_LDFLAGS="-static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -Wl,-lwinpthread -lmman -Wl,--no-whole-archive"
 export LTSMIN_CFLAGS=""

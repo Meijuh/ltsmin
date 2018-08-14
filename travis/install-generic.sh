@@ -71,11 +71,7 @@ if [ ! -f "$HOME/ltsmin-deps/lib/libspot.a" ]; then
     wget "$SPOT_URL" -P /tmp
     tar xf "/tmp/$SPOT_NAME.tar.gz" -C /tmp
     pushd "/tmp/$SPOT_NAME"
-    if [ "$BUILD_TARGET" = "windows" ]; then
-        ./configure --disable-dependency-tracking --disable-python --enable-static --disable-shared --prefix="$HOME/ltsmin-deps" LDFLAGS='-static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -Wl,-lwinpthread -Wl,--no-whole-archive' --host="$BUILD_HOST"
-    else
-        ./configure --disable-dependency-tracking --disable-python --enable-static --disable-shared --prefix="$HOME/ltsmin-deps"
-    fi
+    ./configure --disable-dependency-tracking --disable-python --enable-static --disable-shared --prefix="$HOME/ltsmin-deps" || cat config.log
     make
     make install
     popd

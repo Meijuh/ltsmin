@@ -1,8 +1,7 @@
 #!/bin/bash
 set -e
-#set -o xtrace
 
-export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$HOME/ltsmin-deps/lib/pkgconfig"
+set -o xtrace
 
 CONFIGURE_FLAGS="-q --with-viennacl=$HOME/ltsmin-deps/include --enable-werror"
 #CONFIGURE_FLAGS="$CONFIGURE_FLAGS --enable-silent-rules"
@@ -12,6 +11,9 @@ export CONFIGURE_FLAGS="$CONFIGURE_FLAGS --with-mcrl2=$HOME/ltsmin-deps$MCRL2_LI
 
 autoreconf -i
 ./configure $CONFIGURE_FLAGS || { cat config.log && exit 1; }
+
+cat "$HOME/ltsmin-deps/lib/pkgconfig/sylvan.pc"
+cat config.log
 
 export PATH="$PATH:$HOME/ltsmin-deps/bin:$HOME/ProB"
 

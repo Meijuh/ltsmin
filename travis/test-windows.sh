@@ -2,7 +2,9 @@
 set -e
 #set -o xtrace
 
-. travis/configure-windows.sh "--disable-doxygen-doc --without-mcrl2 LDFLAGS='-static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -Wl,-lwinpthread -lmman -Wl,--no-whole-archive' --disable-check-DVE --disable-check-Promela"
+. travis/configure-windows.sh "--disable-doxygen-doc --without-mcrl2 --disable-check-DVE --disable-check-Promela"
+
+cat src/hre/config.h
 
 export MAKEFLAGS=-j1
 
