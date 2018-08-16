@@ -10,7 +10,7 @@ export BUILD_HOST="x86_64-w64-mingw32.static"
 
 export MCRL2_LIB_DIR=""
 
-. travis/configure-generic.sh "--host=$BUILD_HOST $@"
+. travis/configure-generic.sh "--host=$BUILD_HOST --without-boost $@"
 
 set +e
 
