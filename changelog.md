@@ -1,4 +1,8 @@
 # Changelog
+## August 17, 2018: 3.0.3
+
+- Build completely static Linux binaries.
+
 ## July 3, 2018: 3.0.2
 
 - Fix an issue where libxml2 was unnecessarily made a mandatory dependency.
